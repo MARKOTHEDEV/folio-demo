@@ -27,5 +27,7 @@ export function unseal<T>(token: string | undefined | null): T | null {
 }
 
 export const newCode = () => String(randomInt(0, 1_000_000)).padStart(6, "0");
+/** A password, keyed to its email, as a signed hash — never the password itself. */
+export const hashPassword = (email: string, password: string) => sign(`pw:${email.toLowerCase()}:${password}`);
 export const hashCode = (email: string, code: string) => sign(`${email.toLowerCase()}:${code}`);
 export const newId = (prefix: string) => `${prefix}_${randomBytes(6).toString("hex")}`;

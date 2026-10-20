@@ -39,6 +39,16 @@ export async function sendCode(to: string, name: string, code: string) {
   await send(to, "Your Folio sign-in code", html, `Hi ${name},\n\nYour Folio code is ${code}. It works for 10 minutes.`);
 }
 
+export async function sendReset(to: string, name: string, link: string) {
+  const html = shell(`
+<p style="font-size:16px;margin:0 0 16px">Hi ${esc(name)},</p>
+<p style="font-size:16px;margin:0 0 20px">Someone asked to reset the password for your Folio account. If that was you, choose a new one here. The link works for 30 minutes.</p>
+<table cellpadding="0" cellspacing="0"><tr><td style="background:#0f7a5c;border-radius:10px"><a href="${esc(link)}" style="display:inline-block;padding:12px 22px;color:#ffffff;font-weight:700;text-decoration:none;font-size:15px">Reset my password</a></td></tr></table>
+<p style="font-size:13px;color:#66736c;margin:20px 0 0">Or paste this into your browser:<br><a href="${esc(link)}" style="color:#0f7a5c;word-break:break-all">${esc(link)}</a></p>
+<p style="font-size:14px;color:#66736c;margin:24px 0 0">If you didn't ask for this, you can ignore this email. Your password stays as it is.</p>`);
+  await send(to, "Reset your Folio password", html, `Hi ${name},\n\nTo reset your Folio password, open this link (it works for 30 minutes):\n${link}\n\nIf you didn't ask for this, ignore this email.`);
+}
+
 /** Only TestBrick inboxes get real invoice emails — a public demo never mails strangers. */
 export const mailsClients = (to: string) => /@inbox\.testbrick\.com$/i.test(to);
 

@@ -4,11 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-/** Sign up (name + email) or sign in (email): both email a 6-digit code. */
+/** Sign up (name + email + password) or sign in with a code (email): both email a 6-digit code. */
 export function StartForm({ withName }: { withName: boolean }) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,7 +17,7 @@ export function StartForm({ withName }: { withName: boolean }) {
     e.preventDefault();
     setBusy(true);
     setError(null);
-    const res = await fetch("/api/auth/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, ...(withName ? { name } : {}) }) });
+    const res = await fetch("/api/auth/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, ...(withName ? { name, password } : {}) }) });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       setBusy(false);
@@ -37,6 +38,12 @@ export function StartForm({ withName }: { withName: boolean }) {
         <label className="label" htmlFor="email">Work email</label>
         <input id="email" type="email" className="field" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" autoComplete="email" required />
       </div>
+      {withName && (
+        <div>
+          <label className="label" htmlFor="password">Password</label>
+          <input id="password" type="password" className="field" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" autoComplete="new-password" minLength={8} required />
+        </div>
+      )}
       {error && <p role="alert" className="text-danger text-sm">{error}</p>}
       <button className="btn btn-primary w-full" disabled={busy}>{busy ? "Sending code…" : withName ? "Create account" : "Email me a code"}</button>
       <p className="text-sm text-muted text-center">

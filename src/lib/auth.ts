@@ -1,9 +1,29 @@
 import { cookies } from "next/headers";
-import { unseal } from "./token";
+import { seal, unseal } from "./token";
 
 export type User = { email: string; name: string };
-export type Pending = { email: string; name: string; hash: string; exp: number; sentAt: number };
+export type Pending = { email: string; name: string; hash: string; exp: number; sentAt: number; pwHash?: string };
 export const PENDING_COOKIE = "folio_pending";
+
+/**
+ * THE ACCOUNT: the password this person set, kept in one signed cookie like
+ * the books — no database, every visitor (and every test run) has their own.
+ */
+export type Account = { email: string; name: string; pwHash: string };
+export const ACCOUNT_COOKIE = "folio_account";
+export const MIN_PASSWORD = 8;
+
+export async function account(): Promise<Account | null> {
+  const store = await cookies();
+  return unseal<Account>(store.get(ACCOUNT_COOKIE)?.value);
+}
+
+export async function saveAccount(a: Account) {
+  (await cookies()).set(ACCOUNT_COOKIE, seal(a), { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 60 * 60 * 24 * 30 });
+}
+
+/** The token every other API call sends as "Authorization: Bearer …". */
+export const sessionToken = (u: User) => seal({ email: u.email, name: u.name, exp: Date.now() + 12 * 3600e3 });
 
 /** The signed-in person, from "Authorization: Bearer <token>" (the token /api/auth/verify gave). */
 export function userFrom(req: Request): User | null {

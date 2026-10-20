@@ -46,7 +46,7 @@ export function VerifyForm() {
       />
       {error && <p role="alert" className="text-danger text-sm">{error}</p>}
       <button className="btn btn-primary w-full" disabled={busy || code.length !== 6}>{busy ? "Checking…" : "Verify and continue"}</button>
-      <p className="text-sm text-muted text-center"><Link href="/signup" className="underline">Use a different email</Link></p>
+      <p className="text-sm text-muted text-center"><Link href="/signin" className="underline">Use a different email</Link></p>
     </form>
   );
 }
