@@ -4,7 +4,7 @@ import { ResetForm } from "./ResetForm";
 
 export default function Reset() {
   return (
-    <AuthShell title="Choose a new password" sub="You got here from the link in your email.">
+    <AuthShell title="Choose a new password" sub="Enter the code we emailed you, then your new password.">
       <Suspense fallback={null}>
         <ResetForm />
       </Suspense>

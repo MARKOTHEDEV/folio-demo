@@ -15,6 +15,6 @@ Invoice emails only go to `@inbox.testbrick.com` addresses.
 ## Passwords and reset
 
 Sign-up sets a password (plus the emailed code to confirm the address). Sign in with it at `/signin`,
-or ask for a code at `/signin/code`. **Forgot password?** (`/forgot`) emails a link to `/reset?token=…`
-that works for 30 minutes; the reset page takes the new password. Like the books, the account lives in
+or ask for a code at `/signin/code`. **Forgot password?** (`/forgot`) emails a 6-digit code (10 minutes) and the reset page takes the code plus the
+new password; with `FOLIO_RESET=link` it emails a link to `/reset?token=…` (30 minutes) instead. Like the books, the account lives in
 a signed cookie: no database, every visitor (and every test run) has their own.

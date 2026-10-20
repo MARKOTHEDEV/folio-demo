@@ -39,6 +39,19 @@ export async function sendCode(to: string, name: string, code: string) {
   await send(to, "Your Folio sign-in code", html, `Hi ${name},\n\nYour Folio code is ${code}. It works for 10 minutes.`);
 }
 
+export async function sendResetCode(to: string, name: string, code: string) {
+  const digits = code
+    .split("")
+    .map((d) => `<td style="width:42px;height:50px;border:1px solid #dfe3dc;border-radius:10px;background:#f4f5f2;text-align:center;font-size:24px;font-weight:700">${d}</td>`)
+    .join('<td style="width:6px"></td>');
+  const html = shell(`
+<p style="font-size:16px;margin:0 0 16px">Hi ${esc(name)},</p>
+<p style="font-size:16px;margin:0 0 20px">Someone asked to reset the password for your Folio account. If that was you, enter this code on the reset page. It works for 10 minutes.</p>
+<table cellpadding="0" cellspacing="0"><tr>${digits}</tr></table>
+<p style="font-size:14px;color:#66736c;margin:24px 0 0">If you didn't ask for this, you can ignore this email. Your password stays as it is.</p>`);
+  await send(to, "Your Folio password reset code", html, `Hi ${name},\n\nYour Folio password reset code is ${code}. It works for 10 minutes.\n\nIf you didn't ask for this, ignore this email.`);
+}
+
 export async function sendReset(to: string, name: string, link: string) {
   const html = shell(`
 <p style="font-size:16px;margin:0 0 16px">Hi ${esc(name)},</p>

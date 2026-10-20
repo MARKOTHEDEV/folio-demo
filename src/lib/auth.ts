@@ -13,6 +13,21 @@ export type Account = { email: string; name: string; pwHash: string };
 export const ACCOUNT_COOKIE = "folio_account";
 export const MIN_PASSWORD = 8;
 
+/**
+ * HOW A RESET REACHES YOU: a 6-digit code in the email (the default — the same
+ * door as sign-in), or a link to /reset?token=… (FOLIO_RESET=link).
+ */
+export type ResetMode = "code" | "link";
+export const resetMode = (): ResetMode => (process.env.FOLIO_RESET === "link" ? "link" : "code");
+
+/** A reset by code, waiting for the code: kept in a signed cookie like a sign-in. */
+export type ResetPending = { email: string; name: string; hash: string; exp: number; sentAt: number };
+export const RESET_COOKIE = "folio_reset";
+export async function resetPending() {
+  const store = await cookies();
+  return unseal<ResetPending>(store.get(RESET_COOKIE)?.value);
+}
+
 export async function account(): Promise<Account | null> {
   const store = await cookies();
   return unseal<Account>(store.get(ACCOUNT_COOKIE)?.value);
